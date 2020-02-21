@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+
+  selenium-hub:
+    image: selenium/hub:3.141.59-zirconium
+
+  chrome:
+    image: selenium/node-chrome:3.141.59-zirconium
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+
+  firefox:
+    image: selenium/node-firefox:3.141.59-zirconium
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+
+  selenium-side-runner:
+    image: kernix/selenium-side-runner:1.0
+    depends_on:
+      - chrome
+      - firefox
+      - selenium-hub
+    volumes:
+      - './sides:/sides'
+      - './output:/output'
